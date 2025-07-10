@@ -2,21 +2,28 @@ const track = document.querySelector(".carousel-track");
 const prevBtn = document.querySelector(".prev");
 const nextBtn = document.querySelector(".next");
 const cards = document.querySelectorAll(".card");
+const container = document.querySelector(".carousel-container");
 
 let currentIndex = 0;
-const totalCards = cards.length;
 
 function updateCarousel() {
-  const translateXValue = -currentIndex * 400; // 400px per card
+  const cardWidth = container.offsetWidth;
+
+  // apply width dynamically to all cards
+  cards.forEach(card => {
+    card.style.width = `${cardWidth}px`;
+    card.style.flex = `0 0 ${cardWidth}px`;
+  });
+
+  const translateXValue = -currentIndex * cardWidth;
   track.style.transform = `translateX(${translateXValue}px)`;
 }
 
-// manual buttons
 nextBtn.addEventListener("click", () => {
-  if (currentIndex < totalCards - 1) {
+  if (currentIndex < cards.length - 1) {
     currentIndex++;
   } else {
-    currentIndex = 0; // loop back to start if at end
+    currentIndex = 0;
   }
   updateCarousel();
 });
@@ -25,17 +32,11 @@ prevBtn.addEventListener("click", () => {
   if (currentIndex > 0) {
     currentIndex--;
   } else {
-    currentIndex = totalCards - 1; // go to last card if at start
+    currentIndex = cards.length - 1;
   }
   updateCarousel();
 });
 
-// auto-slide
-setInterval(() => {
-  if (currentIndex < totalCards - 1) {
-    currentIndex++;
-  } else {
-    currentIndex = 0; // loop back
-  }
-  updateCarousel();
-}, 3000); // 3000ms = 3 seconds
+// update width & position on load + resize
+window.addEventListener("load", updateCarousel);
+window.addEventListener("resize", updateCarousel);
